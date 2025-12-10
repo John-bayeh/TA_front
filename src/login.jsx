@@ -13,7 +13,6 @@ function Login() {
   const sendOTP = (e) => {
     e.preventDefault();
 
-    // Allow ANY number: must contain at least ~7 digits
     const digits = phone.replace(/\D/g, "");
     if (digits.length < 7) {
       alert("Enter a valid phone number (any country).");
@@ -28,47 +27,40 @@ function Login() {
     }, 500);
   };
 
- const API_BASE =
-  import.meta.env.VITE_API_BASE || "https://ta-back-080x.onrender.com";
+  const API_BASE =
+    import.meta.env.VITE_API_BASE || "https://ta-back-080x.onrender.com";
 
+  const verifyOTP = async (e) => {
+    e.preventDefault();
 
-const verifyOTP = async (e) => {
-  e.preventDefault();
-
-  if (otp !== DEMO_OTP) {
-    alert("Invalid demo OTP. Use 111111.");
-    return;
-  }
-
-  // clear old voting state
-  localStorage.removeItem("totalVotesUsed");
-  Object.keys(localStorage).forEach((key) => {
-    if (key.startsWith("voted_") || key.startsWith("votedCandidate_")) {
-      localStorage.removeItem(key);
+    if (otp !== DEMO_OTP) {
+      alert("Invalid demo OTP. Use 111111.");
+      return;
     }
-  });
 
-  // 1) Save locally for frontend guards
-  localStorage.setItem("userPhone", phone);
-  localStorage.setItem("authUser", "true");
-
-  // 2) Tell backend to create/init the user in Mongo
-    try {
-    await fetch(`${API_BASE}/user/init`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone }), // or { uid: phone, phone }
+    localStorage.removeItem("totalVotesUsed");
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("voted_") || key.startsWith("votedCandidate_")) {
+        localStorage.removeItem(key);
+      }
     });
-  } catch (err) {
 
-    console.error("initUser error", err);
-    // optional: show toast, but don't block demo login
-  }
+    localStorage.setItem("userPhone", phone);
+    localStorage.setItem("authUser", "true");
 
-  alert("Demo login successful!");
-  navigate("/home");
-};
+    try {
+      await fetch(`${API_BASE}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone }),
+      });
+    } catch (err) {
+      console.error("initUser error", err);
+    }
 
+    alert("Demo login successful!");
+    navigate("/home");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-slate-900 to-indigo-950 flex flex-col items-center justify-center px-4">
