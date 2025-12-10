@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "./firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
 
 import sport from "./assets/sportchannel.jpg";
 import meme from "./assets/memechannel.jpg";
@@ -13,20 +11,20 @@ import news from "./assets/news.jpg";
 
 export default function Category() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [phone, setPhone] = useState(null);
 
+  // ✅ Protect route using localStorage set by your demo Login
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const storedPhone = localStorage.getItem("userPhone");
+    const authUser = localStorage.getItem("authUser");
+
+    if (!storedPhone || authUser !== "true") {
+      navigate("/login", { replace: true });
+    } else {
+      setPhone(storedPhone);
       setLoading(false);
-
-      if (!currentUser) {
-        navigate("/login", { replace: true });
-      }
-    });
-
-    return () => unsub();
+    }
   }, [navigate]);
 
   const categories = [
@@ -39,8 +37,16 @@ export default function Category() {
     { name: "Best Lifestyle", desc: "Award for Lifestyle channels", img: lifestyle, route: "/category/lifestyle" },
   ];
 
-  const handleLogout = async () => {
-    await signOut(auth);
+  // ✅ Logout that clears demo auth + voting state
+  const handleLogout = () => {
+    localStorage.removeItem("userPhone");
+    localStorage.removeItem("authUser");
+    localStorage.removeItem("totalVotesUsed");
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("voted_") || key.startsWith("votedCandidate_")) {
+        localStorage.removeItem(key);
+      }
+    });
     navigate("/login", { replace: true });
   };
 
@@ -58,30 +64,30 @@ export default function Category() {
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white py-8 sm:py-10 px-4">
-      {/* ✅ RESPONSIVE NAVBAR */}
+      {/* Navbar */}
       <section className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-black/40 backdrop-blur-lg px-4 sm:px-6 md:px-8 py-3 sm:py-4 border-b border-gray-700 sticky top-0 z-50 gap-4 sm:gap-0 shadow-lg">
         <div className="font-bold text-lg sm:text-xl text-center sm:text-left flex items-center gap-2">
           🏆 Telegram Award
         </div>
 
         <div className="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-end gap-3 sm:gap-6 w-full sm:w-auto">
-          <div 
+          <div
             className="hover:text-yellow-400 cursor-pointer text-sm sm:text-base px-3 py-1 rounded-lg hover:bg-yellow-500/10 transition-all"
             onClick={() => navigate("/home")}
           >
             Home
           </div>
 
-          <div 
+          <div
             className="hover:text-yellow-400 cursor-pointer text-sm sm:text-base px-3 py-1 rounded-lg hover:bg-yellow-500/10 transition-all"
             onClick={() => navigate("/upgrade")}
           >
             Upgrade
           </div>
 
-          {user && (
+          {phone && (
             <div className="text-xs sm:text-sm text-gray-300 bg-gray-800/50 px-3 py-1 rounded-full border border-gray-600 truncate max-w-xs sm:max-w-none">
-              📱 {user.phoneNumber}
+              📱 {phone}
             </div>
           )}
 
@@ -94,7 +100,7 @@ export default function Category() {
         </div>
       </section>
 
-      {/* ✅ RESPONSIVE HEADER */}
+      {/* Header */}
       <div className="text-center mb-8 sm:mb-10 mt-6 sm:mt-8 px-4">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-3 sm:mb-4 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent leading-tight">
           Award Categories
@@ -104,16 +110,15 @@ export default function Category() {
         </p>
       </div>
 
-      {/* ✅ RESPONSIVE CATEGORIES GRID */}
+      {/* Categories grid */}
       <section className="px-2 sm:px-4 md:px-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-          {categories.map((cat, index) => (
+          {categories.map((cat) => (
             <div
               key={cat.name}
               onClick={() => handleCategoryClick(cat.route)}
               className="cursor-pointer bg-gradient-to-br from-gray-900/70 to-gray-800/50 border-2 border-gray-700/50 hover:border-yellow-500/70 rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-xl hover:shadow-2xl hover:shadow-yellow-500/30 hover:scale-[1.02] transition-all duration-300 group flex flex-col h-full"
             >
-              {/* Image - Responsive */}
               <div className="w-full h-32 sm:h-40 md:h-44 rounded-xl sm:rounded-2xl overflow-hidden mb-4 sm:mb-5 shadow-2xl group-hover:scale-105 transition-transform duration-300">
                 <img
                   src={cat.img}
@@ -121,18 +126,15 @@ export default function Category() {
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                 />
               </div>
-              
-              {/* Title - Responsive */}
+
               <h3 className="text-lg sm:text-xl md:text-2xl font-black text-center mb-2 px-2 leading-tight">
                 {cat.name}
               </h3>
-              
-              {/* Description - Responsive */}
+
               <p className="text-gray-400 text-sm sm:text-base md:text-lg text-center leading-relaxed flex-1">
                 {cat.desc}
               </p>
-              
-              {/* Category Badge */}
+
               <div className="mt-3 pt-3 border-t border-gray-700/50">
                 <span className="inline-block bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
                   Vote Now →
@@ -143,7 +145,6 @@ export default function Category() {
         </div>
       </section>
 
-      {/* ✅ RESPONSIVE FOOTER SPACER */}
       <div className="h-20 sm:h-24" />
     </section>
   );

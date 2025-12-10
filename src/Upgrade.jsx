@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import './index.css';
+import { useNavigate } from "react-router-dom";
+import "./index.css";
 
 // Example user data (replace with your auth system)
 const currentUser = {
@@ -9,7 +10,7 @@ const currentUser = {
 };
 
 // Example group data (initialize as empty object to avoid errors)
-const initialGroupData = {}; 
+const initialGroupData = {};
 
 const plans = [
   {
@@ -19,7 +20,8 @@ const plans = [
     votes: 3,
     color: "yellow",
     description: "A boosted voting package for stronger support",
-    checkout_link: "https://checkout.chapa.co/checkout/web/payment/PL-MJEciyL3V3xA",
+    checkout_link:
+      "https://checkout.chapa.co/checkout/web/payment/PL-MJEciyL3V3xA",
   },
   {
     id: "premium",
@@ -28,11 +30,13 @@ const plans = [
     votes: 6,
     color: "green",
     description: "The ultimate voting boost with double power",
-    checkout_link: "https://checkout.chapa.co/checkout/web/payment/PL-MJEciyL3V3xA",
+    checkout_link:
+      "https://checkout.chapa.co/checkout/web/payment/PL-MJEciyL3V3xA",
   },
 ];
 
 export default function Upgrade() {
+  const navigate = useNavigate();
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const [groupData, setGroupData] = useState(initialGroupData);
 
@@ -54,7 +58,6 @@ export default function Upgrade() {
 
     document.body.appendChild(script);
 
-    // Timeout fallback
     const timeout = setTimeout(() => {
       if (!window.ChapaCheckout) {
         console.warn("Chapa script is taking too long to load...");
@@ -65,17 +68,14 @@ export default function Upgrade() {
     return () => clearTimeout(timeout);
   }, []);
 
-  // Safe checkInGroup function
+  // Safe checkInGroup function (placeholder)
   const checkInGroup = () => {
-    // Use optional chaining or default object to avoid errors
     Object.keys(groupData || {}).forEach((key) => {
       console.log(key, groupData[key]);
-      // Your existing logic here
     });
   };
 
   const handleClick = (plan) => {
-    // If Chapa script is loaded, use inline checkout
     if (scriptLoaded && window.ChapaCheckout) {
       const tx_ref = `tx-${Date.now()}`;
 
@@ -98,21 +98,33 @@ export default function Upgrade() {
         },
       });
     } else {
-      // Fallback: open direct Chapa checkout link in a new tab
       window.open(plan.checkout_link, "_blank");
     }
   };
 
   return (
     <div className="bg-black w-full min-h-screen text-white p-6">
-      <h1 className="text-4xl text-center mb-10">Choose Your Plan</h1>
+      <div className="flex items-center justify-between mb-6">
+        <button
+          onClick={() => navigate("/home")}
+          className="underline text-gray-300"
+        >
+          Home
+        </button>
+      </div>
+
+      <h1 className="text-4xl text-center mb-2">Choose Your Plan</h1>
+      <p className="text-center text-gray-400 mb-8">
+        Boost your votes with Telegram Plus or Premium.
+      </p>
+
       <hr className="border-gray-600 mb-10" />
 
       <div className="flex flex-col md:flex-row justify-center gap-8">
         {plans.map((plan) => (
           <div
             key={plan.id}
-            className={`border border-gray-700 bg-gray-900 rounded-2xl p-6 w-full md:w-1/3 flex flex-col items-center text-center`}
+            className="border border-gray-700 bg-gray-900 rounded-2xl p-6 w-full md:w-1/3 flex flex-col items-center text-center"
           >
             <h2 className={`text-2xl font-bold mb-2 text-${plan.color}-400`}>
               {plan.name}
@@ -125,7 +137,7 @@ export default function Upgrade() {
             </ul>
             <button
               onClick={() => handleClick(plan)}
-              className={`bg-${plan.color}-500 hover:bg-${plan.color}-400 bg-green-400 px-6 py-3 rounded-xl font-semibold transition`}
+              className={`bg-${plan.color}-500 hover:bg-${plan.color}-400 px-6 py-3 rounded-xl font-semibold transition`}
             >
               {scriptLoaded ? "Subscribe Now" : "Pay via Chapa"}
             </button>

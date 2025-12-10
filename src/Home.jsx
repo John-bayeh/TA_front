@@ -1,37 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import sport from "./assets/sportchannel.jpg";
-import meme from "./assets/memechannel.jpg";
-import tech from "./assets/educationchannel.jpg";
 import trophy from "./assets/trophy.jpg";
-import entartain from "./assets/11.jpeg";
-import bot from "./assets/bot.jpg";
-import lifestyle from "./assets/lifestyle.jpg";
-import news from "./assets/news.jpg";
 import Home_award from "./assets/home_awrd.png";
 import backgroundimage from "./assets/a.jpg";
+import CategoriesGrid from "./categoriesgrid"; // ✅ shared grid
 
 export default function Home() {
   const navigate = useNavigate();
-  const initialCategories = [
-    { name: "Best_Sport", desc: "This Award is for sports groups", img: sport, route: "/sports" },
-    { name: "Best_Entertainment_Channels", desc: "For groups helping communities", img: entartain, route: "/entertainment" },
-    { name: "Best_meme_group", desc: "This Award is for Memers", img: meme, route: "/best_meme" },
-    { name: "Best Bot", desc: "This bot is for best bots which help users in polls, reminders and even games", img: bot, route: "/bot" },
-    { name: "Best News Channel", desc: "This award is for top news channels sharing updates fast and accurately", img: news, route: "/news" },
-    { name: "Best Lifestyle", desc: "For lifestyle and fashion-focused Telegram channels", img: lifestyle, route: "/lifestyle" },
-  ];
-
-  const [categories] = useState(initialCategories);
 
   const targetDate = new Date("2025-12-25T00:00:00");
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    mins: 0,
+    secs: 0,
+  });
   const [totalVotes, setTotalVotes] = useState(0);
 
+  // votes counter
   useEffect(() => {
     const updateVotes = () => {
-      const votesUsed = parseInt(localStorage.getItem("totalVotesUsed") || "0", 10);
+      const votesUsed = parseInt(
+        localStorage.getItem("totalVotesUsed") || "0",
+        10
+      );
       setTotalVotes(votesUsed);
     };
 
@@ -45,6 +38,7 @@ export default function Home() {
     };
   }, []);
 
+  // countdown
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -92,8 +86,14 @@ export default function Home() {
       {/* Navbar */}
       <section className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-black/40 backdrop-blur-lg px-4 sm:px-6 md:px-8 py-3 sm:py-4 border-b border-gray-700 shadow-md sticky top-0 z-50 gap-3 sm:gap-0">
         <div className="flex items-center gap-3">
-          <img className="w-8 h-8 sm:w-10 sm:h-10 rounded-full" src={trophy} alt="Trophy" />
-          <span className="font-bold text-base sm:text-lg">Telegram Award</span>
+          <img
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
+            src={trophy}
+            alt="Trophy"
+          />
+          <span className="font-bold text-base sm:text-lg">
+            Telegram Award
+          </span>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 md:gap-8">
@@ -146,18 +146,29 @@ export default function Home() {
 
       {/* Countdown */}
       <section className="mt-10 sm:mt-12 text-center px-4">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Voting Countdown</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">
+          Voting Countdown
+        </h2>
 
         <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-center">
           {["Days", "Hours", "Mins", "Secs"].map((label, i) => {
-            const value = [timeLeft.days, timeLeft.hours, timeLeft.mins, timeLeft.secs][i];
+            const value = [
+              timeLeft.days,
+              timeLeft.hours,
+              timeLeft.mins,
+              timeLeft.secs,
+            ][i];
             return (
               <div
                 key={i}
                 className="bg-gray-800/70 px-4 sm:px-6 py-3 sm:py-4 rounded-xl shadow-lg border border-gray-600 min-w-[70px]"
               >
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold">{value}</div>
-                <div className="text-yellow-400 text-xs sm:text-sm mt-1">{label}</div>
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold">
+                  {value}
+                </div>
+                <div className="text-yellow-400 text-xs sm:text-sm mt-1">
+                  {label}
+                </div>
               </div>
             );
           })}
@@ -166,44 +177,36 @@ export default function Home() {
 
       {/* Important Dates */}
       <section className="mt-10 sm:mt-14 border border-gray-700 px-4 py-5 sm:p-6 rounded-xl bg-gray-900/40 backdrop-blur-md max-w-xl sm:max-w-2xl mx-auto shadow-xl">
-        <h2 className="text-xl sm:text-2xl font-bold mb-4 text-center">Important Dates</h2>
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 text-center">
+          Important Dates
+        </h2>
         <div className="flex flex-col gap-5 sm:gap-6 text-left text-sm sm:text-base">
           <div>
-            <div className="text-yellow-400 font-semibold text-base sm:text-lg">Voting Starts</div>
-            <div className="text-lg sm:text-xl font-bold mt-1">October 25, 2025</div>
+            <div className="text-yellow-400 font-semibold text-base sm:text-lg">
+              Voting Starts
+            </div>
+            <div className="text-lg sm:text-xl font-bold mt-1">
+              October 25, 2025
+            </div>
           </div>
           <div>
-            <div className="text-yellow-400 font-semibold text-base sm:text-lg">Voting Ends</div>
-            <div className="text-lg sm:text-xl font-bold mt-1">November 25, 2025</div>
+            <div className="text-yellow-400 font-semibold text-base sm:text-lg">
+              Voting Ends
+            </div>
+            <div className="text-lg sm:text-xl font-bold mt-1">
+              December 24, 2025
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Categories Grid */}
+      {/* Categories Grid – shared with Category.jsx */}
       <section className="px-4 sm:px-6 md:px-8 w-full max-w-6xl mx-auto mt-10 sm:mt-14">
         <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-10 text-center">
           Award Categories
         </h2>
 
-        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-          {categories.map((category, i) => (
-            <div
-              key={i}
-              onClick={() => navigate(category.route)}
-              className="cursor-pointer bg-gray-900/60 border border-gray-700 p-4 sm:p-5 rounded-2xl shadow-xl hover:shadow-yellow-500/20 hover:scale-105 transition-all flex flex-col"
-            >
-              <img
-                className="w-full h-36 sm:h-44 object-cover rounded-lg mb-3 sm:mb-4 shadow-md"
-                src={category.img}
-                alt={category.name}
-              />
-              <h3 className="text-lg sm:text-xl font-bold">{category.name}</h3>
-              <p className="text-gray-400 mt-1 text-sm sm:text-base">
-                {category.desc}
-              </p>
-            </div>
-          ))}
-        </div>
+        <CategoriesGrid />
       </section>
 
       {/* Footer */}
