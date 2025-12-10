@@ -28,8 +28,9 @@ function Login() {
     }, 500);
   };
 
-  const API_BASE =
-  import.meta.env.VITE_API_BASE || "https://your-backend-domain.com"; // adjust for your setup
+ const API_BASE =
+  import.meta.env.VITE_API_BASE || "https://ta-back-080x.onrender.com";
+
 
 const verifyOTP = async (e) => {
   e.preventDefault();
@@ -52,13 +53,14 @@ const verifyOTP = async (e) => {
   localStorage.setItem("authUser", "true");
 
   // 2) Tell backend to create/init the user in Mongo
-  try {
+    try {
     await fetch(`${API_BASE}/user/init`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ phone }), // or { uid: phone, phone }
     });
   } catch (err) {
+
     console.error("initUser error", err);
     // optional: show toast, but don't block demo login
   }
